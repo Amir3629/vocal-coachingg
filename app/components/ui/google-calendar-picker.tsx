@@ -63,15 +63,32 @@ const customCalendarStyles = `
   }
   
   .rdp-row {
-    justify-content: space-around !important;
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    width: 100% !important;
+    justify-items: center !important;
+  }
+
+  .rdp-cell {
+    width: auto !important;
   }
 
   .rdp-table {
     width: 100% !important;
+    display: block !important;
+  }
+
+  .rdp-month {
+    width: 100% !important;
   }
 
   .rdp-caption {
-    padding: 0 1rem;
+    padding: 0 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .rdp-nav {
+    gap: 0.5rem !important;
   }
 `;
 
@@ -217,7 +234,7 @@ export default function GoogleCalendarPicker({
                   </div>
                   
                   <div className="p-2 flex flex-row justify-center items-start gap-2">
-                    <div className="w-[280px]">
+                    <div className="w-[260px]">
                       <Calendar
                         mode="single"
                         selected={date}
@@ -225,15 +242,15 @@ export default function GoogleCalendarPicker({
                         disabled={disabledDays}
                         initialFocus
                         classNames={{
-                          head_row: "flex justify-between w-full",
-                          head_cell: "text-[#C8A97E] rounded-md w-8 font-medium text-[0.8rem] mx-0.5 text-center",
-                          cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-[#C8A97E]/10 m-0.5",
-                          day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center",
+                          head_row: "grid grid-cols-5 w-full",
+                          head_cell: "text-[#C8A97E] rounded-md w-8 font-medium text-[0.8rem] text-center",
+                          cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-[#C8A97E]/10",
+                          day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center hover:bg-gray-800/50 rounded-md",
                           day_selected: "bg-[#C8A97E] text-black hover:bg-[#C8A97E] hover:text-black",
                           day_today: "bg-[#C8A97E]/10 text-[#C8A97E] font-semibold",
-                          table: "w-full",
+                          table: "w-full border-collapse",
                           months: "flex flex-col space-y-2",
-                          month: "space-y-2 w-full"
+                          month: "space-y-2"
                         }}
                       />
                     </div>
