@@ -3,7 +3,7 @@
 import React, { Fragment, useRef, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { X } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface LegalDocumentModalProps {
   children: React.ReactNode
@@ -35,68 +35,65 @@ export default function LegalDocumentModal({
   }
 
   return (
-    <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog 
-        as="div" 
-        className="relative z-[1000]" 
-        initialFocus={cancelButtonRef} 
-        onClose={onClose}
-      >
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-black/90 backdrop-blur-sm transition-opacity" />
-        </Transition.Child>
+    <AnimatePresence mode="wait">
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            className="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-[9999]"
+            initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            animate={{ 
+              opacity: 1, 
+              backdropFilter: "blur(2px)",
+              transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+            }}
+            exit={{ 
+              opacity: 0, 
+              backdropFilter: "blur(0px)",
+              transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+            }}
+            onClick={onClose}
+          />
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel 
-                className="relative transform overflow-hidden rounded-lg bg-[#121212] border border-gray-800 text-left shadow-xl transition-all my-4 w-full max-w-2xl mx-4"
-                onClick={(e) => e.stopPropagation()}
+          {/* Modal */}
+          <div className="fixed inset-0 overflow-y-auto z-[10000]">
+            <div className="flex min-h-full items-center justify-center p-4">
+              <motion.div
+                className="relative w-full max-w-3xl bg-[#0A0A0A] rounded-xl border border-[#C8A97E]/20 shadow-2xl overflow-hidden"
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+                }}
+                exit={{
+                  opacity: 0,
+                  y: 20,
+                  scale: 0.95,
+                  transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+                }}
               >
-                <div className="flex items-center justify-between px-4 py-4 border-b border-gray-800">
-                  {title && <h2 className="text-xl font-semibold text-white mb-0.5">{title}</h2>}
-                  <div className={title ? '' : 'ml-auto'}>
-                    <motion.button
-                      type="button"
-                      className="text-gray-400 hover:text-white focus:outline-none transition-all duration-200"
-                      onClick={onClose}
-                      ref={cancelButtonRef}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <span className="sr-only">Close</span>
-                      <X className="h-6 w-6" aria-hidden="true" />
-                    </motion.button>
-                  </div>
+                {/* Header */}
+                <div className="flex justify-between items-center p-4 border-b border-gray-800">
+                  <h2 className="text-xl font-semibold text-white">{title}</h2>
+                  <button
+                    onClick={onClose}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <X size={24} />
+                  </button>
                 </div>
-                <div 
-                  ref={contentRef}
-                  onWheel={handleWheel}
-                  className="max-h-[70vh] overflow-y-auto custom-scrollbar px-8 pt-5 pb-8 legal-document-content overscroll-contain"
-                >
+
+                {/* Content */}
+                <div className="max-h-[70vh] overflow-y-auto p-6 custom-scrollbar">
                   {children}
                 </div>
-              </Dialog.Panel>
-            </Transition.Child>
+              </motion.div>
+            </div>
           </div>
-        </div>
-      </Dialog>
-    </Transition.Root>
+        </>
+      )}
+    </AnimatePresence>
   )
 } 

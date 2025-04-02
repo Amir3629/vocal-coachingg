@@ -63,7 +63,9 @@ export default function BookingForm({ isOpen: externalIsOpen, onClose }: Booking
   const { t } = useTranslation()
   
   // State for showing the booking form
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(externalIsOpen)
+  const [isClosing, setIsClosing] = useState(false)
+  const [isContentVisible, setIsContentVisible] = useState(true)
   
   // State for current step and service type
   const [currentStep, setCurrentStep] = useState<FormStep>('service')
@@ -136,31 +138,65 @@ export default function BookingForm({ isOpen: externalIsOpen, onClose }: Booking
     closeBookingForm()
   }
   
-  // Close booking form
-  const closeBookingForm = () => {
-    // Use smoother exit animation
-    setIsOpen(false);
-    
-    // Reset form state after animation completes
-    setTimeout(() => {
-      setCurrentStep('service');
-      setServiceType(null);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        message: '',
-        termsAccepted: false,
-        privacyAccepted: false,
-        serviceType: null
-      });
-      
-      // Call external onClose if provided
-      if (onClose) {
-        onClose();
-      }
-    }, 600); // Match the duration of the exit animation
+  // Define animation variants
+  const modalVariants = {
+    open: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+    },
+    closed: {
+      opacity: 0,
+      scale: 0.95,
+      y: 20,
+      transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+    }
   }
+
+  const contentVariants = {
+    open: {
+      opacity: 1,
+      transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+    },
+    closing: {
+      opacity: 0,
+      transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+    }
+  }
+
+  const backdropVariants = {
+    open: {
+      opacity: 1,
+      backdropFilter: "blur(2px)",
+      transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+    },
+    closed: {
+      opacity: 0,
+      backdropFilter: "blur(0px)",
+      transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+    }
+  }
+
+  // Close booking form with smooth simultaneous animations
+  const closeBookingForm = () => {
+    setIsClosing(true)
+    setTimeout(() => {
+      setIsClosing(false)
+      setIsOpen(false)
+      if (onClose) {
+        onClose()
+      }
+    }, 800)
+  }
+  
+  // Reset visibility when opening
+  useEffect(() => {
+    if (isOpen) {
+      setIsContentVisible(true)
+      setIsClosing(false)
+    }
+  }, [isOpen])
   
   // Determine if form is valid for current step
   const isCurrentStepValid = () => {
@@ -211,16 +247,30 @@ export default function BookingForm({ isOpen: externalIsOpen, onClose }: Booking
     }
   }
   
+  const getBookingTitle = () => {
+    switch(serviceType) {
+      case 'professioneller-gesang':
+        return t('booking.liveSingingTitle', 'Live Jazz Performance buchen')
+      case 'vocal-coaching':
+        return t('booking.vocalCoachingTitle', 'Vocal Coaching buchen')
+      case 'gesangsunterricht':
+        return t('booking.workshopTitle', 'Jazz Workshop buchen')
+      default:
+        return t('booking.title', 'Termin buchen')
+    }
+  }
+  
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isOpen && (
         <>
           {/* Backdrop */}
           <motion.div
             className="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-[100]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            variants={backdropVariants}
+            initial="closed"
+            animate={isClosing ? "closed" : "open"}
+            exit="closed"
             onClick={closeBookingForm}
           />
 
@@ -229,15 +279,18 @@ export default function BookingForm({ isOpen: externalIsOpen, onClose }: Booking
             <div className="flex min-h-full items-center justify-center p-4">
               <motion.div
                 className="relative w-full max-w-2xl bg-[#0A0A0A] rounded-xl border border-[#C8A97E]/20 shadow-2xl overflow-hidden"
-                initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                  scale: 1
-                }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
+                variants={modalVariants}
+                initial="closed"
+                animate={isClosing ? "closed" : "open"}
+                exit="closed"
               >
-                <div className="p-5 relative overflow-auto" style={{ maxHeight: 'calc(100vh - 100px)' }}>
+                <motion.div 
+                  className="p-5 relative overflow-auto"
+                  style={{ maxHeight: 'calc(100vh - 100px)' }}
+                  variants={contentVariants}
+                  initial="open"
+                  animate={isClosing ? "closing" : "open"}
+                >
                   {/* Close button */}
                   <button 
                     onClick={closeBookingForm}
@@ -248,16 +301,7 @@ export default function BookingForm({ isOpen: externalIsOpen, onClose }: Booking
                   </button>
                   
                   <h2 className="text-lg font-bold text-white mb-5 text-center mt-1">
-                    {currentStep === 'service' 
-                      ? t('booking.title', 'Buchung') 
-                      : currentStep === 'details' && serviceType === 'professioneller-gesang'
-                        ? t('booking.liveSingingTitle', 'Live Gesang buchen')
-                        : currentStep === 'details' && serviceType === 'vocal-coaching'
-                          ? t('booking.vocalCoachingTitle', 'Vocal Coaching buchen')
-                          : currentStep === 'details' && serviceType === 'gesangsunterricht'
-                            ? t('booking.workshopTitle', 'Gesangsunterricht buchen')
-                            : t('booking.confirmTitle', 'Buchung bestätigen')
-                    }
+                    {getBookingTitle()}
                   </h2>
                   
                   {/* Progress Bar */}
@@ -319,7 +363,7 @@ export default function BookingForm({ isOpen: externalIsOpen, onClose }: Booking
                       </button>
                     )}
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
             </div>
           </div>
