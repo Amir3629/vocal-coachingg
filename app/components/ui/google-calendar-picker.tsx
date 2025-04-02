@@ -206,7 +206,7 @@ export default function GoogleCalendarPicker({
                   animate={{ scale: isClosing ? 0.95 : 1, opacity: isClosing ? 0 : 1 }}
                   transition={{ duration: 0.8 }}
                 >
-                  <div className="flex justify-between items-center p-4 border-b border-gray-800">
+                  <div className="flex justify-between items-center p-3 border-b border-gray-800">
                     <h3 className="text-white font-medium text-lg">{t('booking.selectDate', 'Datum auswählen')}</h3>
                     <button 
                       onClick={() => setIsOpen(false)} 
@@ -216,8 +216,8 @@ export default function GoogleCalendarPicker({
                     </button>
                   </div>
                   
-                  <div className="p-4 flex flex-row justify-center items-start gap-4">
-                    <div className="w-[300px]">
+                  <div className="p-2 flex flex-row justify-center items-start gap-2">
+                    <div className="w-[280px]">
                       <Calendar
                         mode="single"
                         selected={date}
@@ -226,14 +226,14 @@ export default function GoogleCalendarPicker({
                         initialFocus
                         classNames={{
                           head_row: "flex justify-between w-full",
-                          head_cell: "text-[#C8A97E] rounded-md w-9 font-medium text-[0.8rem] mx-0.5 text-center",
+                          head_cell: "text-[#C8A97E] rounded-md w-8 font-medium text-[0.8rem] mx-0.5 text-center",
                           cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-[#C8A97E]/10 m-0.5",
-                          day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center",
+                          day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center",
                           day_selected: "bg-[#C8A97E] text-black hover:bg-[#C8A97E] hover:text-black",
                           day_today: "bg-[#C8A97E]/10 text-[#C8A97E] font-semibold",
                           table: "w-full",
-                          months: "flex flex-col space-y-4",
-                          month: "space-y-4 w-full"
+                          months: "flex flex-col space-y-2",
+                          month: "space-y-2 w-full"
                         }}
                       />
                     </div>
@@ -246,10 +246,10 @@ export default function GoogleCalendarPicker({
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
-                            className="w-[140px] border-l border-gray-800 pl-4"
+                            className="w-[120px] border-l border-gray-800 pl-2"
                           >
-                            <h4 className="text-white text-sm font-medium mb-3 flex items-center">
-                              <Clock className="w-4 h-4 mr-2 text-[#C8A97E]" />
+                            <h4 className="text-white text-sm font-medium mb-2 flex items-center">
+                              <Clock className="w-4 h-4 mr-1 text-[#C8A97E]" />
                               {t('booking.selectTime', 'Uhrzeit auswählen')}
                             </h4>
                             
