@@ -50,14 +50,14 @@ export default function ServiceCard({
     collapsed: { 
       height: 320,
       transition: {
-        duration: 0.8,
+        duration: 1.2,
         ease: [0.4, 0, 0.2, 1]
       }
     },
     expanded: { 
       height: "auto",
       transition: { 
-        duration: 0.8,
+        duration: 1.2,
         ease: [0.4, 0, 0.2, 1]
       }
     }
