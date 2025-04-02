@@ -37,8 +37,7 @@ export default function Home() {
   
   const { scrollYProgress } = useScroll({
     target: parallaxRef,
-    offset: ["start start", "end start"],
-    layoutEffect: false
+    offset: ["start start", "end start"]
   })
 
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])

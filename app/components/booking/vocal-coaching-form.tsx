@@ -180,7 +180,7 @@ export default function VocalCoachingForm({ formData, onChange }: VocalCoachingF
                   : 'border-gray-700 text-gray-400 hover:border-gray-600'
               } transition-colors text-sm`}
             >
-              {t('booking.beginner', 'Anfänger')}
+              {t('booking.beginner', 'Einsteigerin')}
             </button>
             
             <button
@@ -192,7 +192,7 @@ export default function VocalCoachingForm({ formData, onChange }: VocalCoachingF
                   : 'border-gray-700 text-gray-400 hover:border-gray-600'
               } transition-colors text-sm`}
             >
-              {t('booking.intermediate', 'Fortgeschritten')}
+              {t('booking.intermediate', 'Aufstrebende')}
             </button>
             
             <button
@@ -204,7 +204,7 @@ export default function VocalCoachingForm({ formData, onChange }: VocalCoachingF
                   : 'border-gray-700 text-gray-400 hover:border-gray-600'
               } transition-colors text-sm`}
             >
-              {t('booking.advanced', 'Profi')}
+              {t('booking.advanced', 'Virtuosin')}
             </button>
           </div>
         </div>
