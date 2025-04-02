@@ -21,6 +21,12 @@ jobs:
 
       - name: Build
         run: npm run build -- --no-lint
+        
+      - name: Create .nojekyll file
+        run: touch out/.nojekyll
+        
+      - name: Debug output directory
+        run: ls -la out/
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4

@@ -30,6 +30,11 @@ const nextConfig = {
   publicRuntimeConfig: {
     basePath: process.env.NODE_ENV === 'production' ? '/vocal-coachingg' : '',
   },
+  onBuildEnd: async () => {
+    const fs = require('fs');
+    const path = require('path');
+    fs.writeFileSync(path.join(__dirname, 'out', '.nojekyll'), '');
+  }
 }
 
 module.exports = nextConfig

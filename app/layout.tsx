@@ -45,7 +45,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: "Mel jazz - Vocal Coaching in Berlin",
+  title: "Mel jazz - Vocal Coaching in Berlin (GitHub Pages)",
   description: "Professional vocal coaching and performance in Berlin",
   icons: {
     icon: [
