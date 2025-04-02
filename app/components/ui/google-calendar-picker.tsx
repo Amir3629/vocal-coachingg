@@ -135,7 +135,7 @@ export default function GoogleCalendarPicker({
   const [showTimeSlots, setShowTimeSlots] = useState(false);
 
   // Determine the container width based on content
-  const containerWidth = showTimeSlots && date ? 'w-[390px]' : 'w-[250px]';
+  const containerWidth = showTimeSlots && date ? 'w-[420px]' : 'w-[280px]';
 
   // Update the parent component when a date and time are selected
   useEffect(() => {
@@ -261,8 +261,8 @@ export default function GoogleCalendarPicker({
                     </button>
                   </div>
                   
-                  <div className="p-2 flex flex-row justify-center items-start gap-2">
-                    <div className="w-[230px]">
+                  <div className="p-3 flex flex-row justify-center items-start gap-2">
+                    <div className="w-[250px]">
                       <Calendar
                         mode="single"
                         selected={date}
@@ -270,15 +270,15 @@ export default function GoogleCalendarPicker({
                         disabled={disabledDays}
                         initialFocus
                         classNames={{
-                          head_row: "w-full mb-1",
-                          head_cell: "text-[#C8A97E] rounded-md font-medium text-[0.8rem] text-center",
+                          head_row: "w-full mb-2",
+                          head_cell: "text-[#C8A97E] font-medium text-[0.8rem] text-center pb-2",
                           cell: "text-center text-sm relative",
                           day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center hover:bg-gray-800/50 rounded-md mx-auto",
                           day_selected: "bg-[#C8A97E] text-black hover:bg-[#C8A97E] hover:text-black",
                           day_today: "bg-[#C8A97E]/10 text-[#C8A97E] font-semibold",
                           table: "w-full border-collapse",
                           months: "flex flex-col space-y-2",
-                          month: "space-y-1"
+                          month: "space-y-2"
                         }}
                       />
                     </div>
@@ -291,7 +291,7 @@ export default function GoogleCalendarPicker({
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
-                            className="w-[120px] border-l border-gray-800 pl-2"
+                            className="w-[130px] border-l border-gray-800 pl-3"
                           >
                             <h4 className="text-white text-sm font-medium mb-2 flex items-center">
                               <Clock className="w-4 h-4 mr-1 text-[#C8A97E]" />
