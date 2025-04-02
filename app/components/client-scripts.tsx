@@ -13,45 +13,73 @@ export default function ClientScripts() {
     
     // Fix audio elements with incorrect paths
     function fixAudioPaths() {
+      console.log("Running fixAudioPaths...");
       const audioElements = document.querySelectorAll('audio');
-      audioElements.forEach(audio => {
-        // Skip already fixed audio elements
-        if (audio.dataset.pathFixed) return;
-        
-        const sources = audio.querySelectorAll('source');
-        sources.forEach(source => {
-          const src = source.getAttribute('src');
-          if (src && !src.includes('/vocal-coachingg/') && src.startsWith('/')) {
-            // Clean up the path to just the filename
-            const baseName = src.split('/').pop();
-            if (baseName) {
-              const newSrc = getMediaPath(baseName);
-              console.log(`Fixing audio source path: ${src} -> ${newSrc}`);
-              source.setAttribute('src', newSrc);
+      console.log(`Found ${audioElements.length} audio elements`);
+      
+      audioElements.forEach((audio, index) => {
+        try {
+          // Skip already fixed audio elements
+          if (audio.dataset.pathFixed) {
+            console.log(`Audio #${index} already fixed, skipping`);
+            return;
+          }
+          
+          console.log(`Fixing audio #${index}:`, audio);
+          
+          // Check if this is a direct src on the audio element
+          const audioSrc = audio.getAttribute('src');
+          if (audioSrc) {
+            console.log(`Audio #${index} has direct src: ${audioSrc}`);
+            
+            if (!audioSrc.includes('/vocal-coachingg/')) {
+              // Extract filename
+              const baseName = audioSrc.split('/').pop();
+              if (baseName) {
+                const newSrc = getMediaPath(baseName);
+                console.log(`Fixing audio src: ${audioSrc} -> ${newSrc}`);
+                audio.setAttribute('src', newSrc);
+              }
             }
           }
-        });
-        
-        // Also fix direct src attributes on audio elements
-        const audioSrc = audio.getAttribute('src');
-        if (audioSrc && !audioSrc.includes('/vocal-coachingg/') && audioSrc.startsWith('/')) {
-          const baseName = audioSrc.split('/').pop();
-          if (baseName) {
-            const newSrc = getMediaPath(baseName);
-            console.log(`Fixing audio element src: ${audioSrc} -> ${newSrc}`);
-            audio.setAttribute('src', newSrc);
+          
+          // Also check for source elements
+          const sources = audio.querySelectorAll('source');
+          console.log(`Audio #${index} has ${sources.length} source elements`);
+          
+          sources.forEach((source, sourceIndex) => {
+            const src = source.getAttribute('src');
+            if (src) {
+              console.log(`Source #${sourceIndex} has src: ${src}`);
+              
+              if (!src.includes('/vocal-coachingg/')) {
+                // Extract filename
+                const baseName = src.split('/').pop();
+                if (baseName) {
+                  const newSrc = getMediaPath(baseName);
+                  console.log(`Fixing source src: ${src} -> ${newSrc}`);
+                  source.setAttribute('src', newSrc);
+                }
+              }
+            }
+          });
+          
+          // Mark as fixed
+          audio.dataset.pathFixed = 'true';
+          
+          // Reload the audio
+          console.log(`Reloading audio #${index}`);
+          audio.load();
+          
+          // Play if it's supposed to autoplay
+          if (audio.getAttribute('autoplay') === 'true' || audio.autoplay) {
+            console.log(`Audio #${index} has autoplay, attempting to play`);
+            audio.play().catch(err => {
+              console.error(`Error playing fixed audio #${index}:`, err);
+            });
           }
-        }
-        
-        // Mark as fixed
-        audio.dataset.pathFixed = 'true';
-        
-        // Reload the audio if needed
-        if (audio.getAttribute('autoplay') === 'true' || audio.autoplay) {
-          audio.load();
-          audio.play().catch(err => console.error('Error playing fixed audio:', err));
-        } else {
-          audio.load();
+        } catch (err) {
+          console.error(`Error fixing audio #${index}:`, err);
         }
       });
     }

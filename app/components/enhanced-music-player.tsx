@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Play, Pause, Music } from "lucide-react";
-import { getAudioPath } from "@/app/utils/paths";
+import { getMediaPath } from "@/app/utils/asset-path";
 
 // Add event system for media coordination
 const MEDIA_STOP_EVENT = 'stopAllMedia';
@@ -50,26 +50,36 @@ export default function EnhancedMusicPlayer() {
   // Update audio src
   useEffect(() => {
     if (audioRef.current) {
-      // Use direct path to the audio file
-      audioRef.current.src = `/audio/AUDIO-2025-03-19-16-15-29.mp3`;
-      console.log("Audio source set to:", `/audio/AUDIO-2025-03-19-16-15-29.mp3`);
+      // Get proper filename without path prefixes
+      const filename = track.file.split('/').pop()?.trim();
       
-      // Set volume to make sure it's audible
-      audioRef.current.volume = 1.0;
-      
-      // Preload the audio
-      audioRef.current.load();
-      
-      // Add audio event listeners
-      audioRef.current.addEventListener('canplaythrough', () => {
-        console.log("Audio can play through, ready to play");
-      });
-      
-      audioRef.current.addEventListener('error', (e) => {
-        console.error("Audio loading error:", e);
-      });
+      if (filename) {
+        // Use our utility function to get the correct path and add mp3 extension if missing
+        const properPath = getMediaPath(filename.endsWith('.mp3') ? filename : `${filename}.mp3`);
+        audioRef.current.src = properPath;
+        console.log("Audio source set to:", properPath);
+        
+        // Set volume to make sure it's audible
+        audioRef.current.volume = 1.0;
+        
+        // Preload the audio
+        audioRef.current.load();
+        
+        // Add audio event listeners
+        audioRef.current.addEventListener('canplaythrough', () => {
+          console.log("Audio can play through, ready to play");
+        });
+        
+        audioRef.current.addEventListener('error', (e) => {
+          console.error("Audio loading error:", e);
+          const audioElement = e.target as HTMLAudioElement;
+          if (audioElement.error) {
+            console.error("Error code:", audioElement.error.code, "Message:", audioElement.error.message);
+          }
+        });
+      }
     }
-  }, []);
+  }, [track.file]);
 
   // Handle scroll to show/hide mini player
   useEffect(() => {
@@ -262,7 +272,6 @@ export default function EnhancedMusicPlayer() {
         onError={handleError}
         preload="auto"
         className="hidden"
-        src="/audio/AUDIO-2025-03-19-16-15-29.mp3"
       />
       
       {/* Show any error messages */}
