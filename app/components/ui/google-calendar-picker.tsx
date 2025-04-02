@@ -92,6 +92,31 @@ export default function GoogleCalendarPicker({
   const [isClosing, setIsClosing] = useState(false);
   const [showTimeSlots, setShowTimeSlots] = useState(false);
 
+  // Handle opening and closing with blur effect
+  const handleOpen = () => {
+    document.body.style.transition = 'filter 0.4s ease-out';
+    document.body.style.filter = 'blur(4px)';
+    setIsOpen(true);
+  };
+
+  const handleClose = () => {
+    setIsClosing(true);
+    document.body.style.transition = 'filter 0.4s ease-out';
+    document.body.style.filter = 'blur(0px)';
+    setTimeout(() => {
+      setIsOpen(false);
+      setIsClosing(false);
+    }, 400);
+  };
+
+  // Cleanup blur effect when component unmounts
+  useEffect(() => {
+    return () => {
+      document.body.style.filter = '';
+      document.body.style.transition = '';
+    };
+  }, []);
+
   // Update the parent component when a date and time are selected
   useEffect(() => {
     if (date) {
@@ -138,11 +163,12 @@ export default function GoogleCalendarPicker({
         
         // Start closing the calendar smoothly
         setTimeout(() => {
+          document.body.style.filter = 'blur(0px)';
           setIsClosing(true);
           setTimeout(() => {
             setIsOpen(false);
             setIsClosing(false);
-          }, 300);
+          }, 400);
         }, 500);
       }, 500);
     }, 200);
@@ -154,7 +180,7 @@ export default function GoogleCalendarPicker({
       
       <div 
         className={`flex items-center justify-between bg-[#1A1A1A] border border-gray-700 rounded-lg px-4 py-3 cursor-pointer hover:border-[#C8A97E] transition-colors ${className}`}
-        onClick={() => setIsOpen(prev => !prev)}
+        onClick={handleOpen}
       >
         <div className="flex items-center">
           <CalendarIcon className="w-5 h-5 text-[#C8A97E] mr-2" />
@@ -183,20 +209,25 @@ export default function GoogleCalendarPicker({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute z-50 top-full left-0 mt-2 w-auto min-w-[320px]"
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+            className="fixed inset-0 z-50 flex items-center justify-center"
+            style={{ background: 'rgba(0, 0, 0, 0.5)' }}
+            onClick={handleClose}
           >
             <motion.div 
-              className="bg-[#111] border border-gray-800 rounded-lg shadow-xl overflow-hidden"
-              animate={{ scale: isClosing ? 0.95 : 1, opacity: isClosing ? 0 : 1 }}
+              className="bg-[#111] border border-gray-800 rounded-lg shadow-xl overflow-hidden max-w-[90vw] w-auto"
+              onClick={e => e.stopPropagation()}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3 }}
             >
               <div className="flex justify-between items-center p-3 border-b border-gray-800">
                 <h3 className="text-white font-medium">{t('booking.selectDate', 'Datum auswählen')}</h3>
-                <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white">
+                <button onClick={handleClose} className="text-gray-400 hover:text-white">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -223,7 +254,7 @@ export default function GoogleCalendarPicker({
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
+                        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                         className="md:ml-4 mt-4 md:mt-0 md:pl-4 md:border-l md:border-gray-800"
                       >
                         <h4 className="text-white text-sm font-medium mb-3 flex items-center">
@@ -231,21 +262,24 @@ export default function GoogleCalendarPicker({
                           {t('booking.selectTime', 'Uhrzeit auswählen')}
                         </h4>
                         <div className="grid grid-cols-2 gap-2">
-                          {DEFAULT_TIME_SLOTS.map((slot) => (
+                          {DEFAULT_TIME_SLOTS.map((slot, index) => (
                             <motion.button
                               key={slot.value}
-                              initial={{ opacity: 0, y: 5 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ duration: 0.3, delay: 0.2 + parseInt(slot.value) * 0.05 }}
-                              className={`text-center px-3 py-2 rounded-md transition-colors ${
+                              onClick={() => handleTimeSelect(slot.value)}
+                              className={`px-3 py-2 rounded-md text-sm transition-all ${
                                 timeSlot === slot.value
                                   ? 'bg-[#C8A97E] text-black font-medium'
-                                  : slot.available 
-                                    ? 'bg-[#1A1A1A] text-white hover:bg-[#222]'
-                                    : 'bg-[#1A1A1A]/50 text-gray-500 cursor-not-allowed'
+                                  : 'bg-[#1A1A1A] text-white hover:bg-[#C8A97E]/20'
                               }`}
-                              onClick={() => slot.available && handleTimeSelect(slot.value)}
-                              disabled={!slot.available}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ 
+                                duration: 0.3,
+                                delay: index * 0.05,
+                                ease: [0.4, 0, 0.2, 1]
+                              }}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
                             >
                               {slot.label}
                             </motion.button>
