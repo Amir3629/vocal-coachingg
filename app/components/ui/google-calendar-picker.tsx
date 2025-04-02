@@ -49,37 +49,71 @@ const isWeekend = (date: Date) => {
 
 // Add custom styling to hide Saturday and Sunday columns and enforce 5-col grid
 const customCalendarStyles = `
-  .rdp-day_saturday,
-  .rdp-day_sunday {
+  /* Hide weekend days */
+  .rdp-tbody tr td:first-child,
+  .rdp-tbody tr td:last-child {
     display: none !important;
   }
   
+  /* Hide weekend headers */
   .rdp-head_cell:first-child,
   .rdp-head_cell:last-child {
     display: none !important;
   }
 
+  /* Ensure table takes full width */
   .rdp-table {
     width: 100% !important;
-    max-width: 100% !important; 
+    table-layout: fixed !important;
   }
 
-  .rdp-head_row,
-  .rdp-row {
+  /* Make rows display properly */
+  .rdp-tbody tr {
     display: grid !important;
-    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(5, 1fr) !important;
     width: 100% !important;
-    gap: 2px; /* Adjust gap as needed */
   }
-  
-  .rdp-cell,
+
+  /* Header row styling */
+  .rdp-head_row {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    width: 100% !important;
+  }
+
+  /* Cell styling */
+  .rdp-cell {
+    width: auto !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
   .rdp-head_cell {
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important; /* Ensure cells fill grid column */
-    display: flex;
-    justify-content: center;
-    align-items: center; /* Vertically center content */
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Custom scrollbar styling */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #1A1A1A;
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #444;
   }
 `;
 
@@ -235,15 +269,15 @@ export default function GoogleCalendarPicker({
                         onSelect={handleDateSelect}
                         disabled={disabledDays}
                         initialFocus
-                        classNames={{ 
-                          head_row: "w-full mb-1", 
-                          head_cell: "text-[#C8A97E] rounded-md font-medium text-[0.8rem] text-center p-0 h-8",
-                          cell: "p-0 m-0 h-8",
-                          day: "h-full w-full p-0 font-normal aria-selected:opacity-100 flex items-center justify-center hover:bg-gray-800/50 rounded-md",
+                        classNames={{
+                          head_row: "w-full mb-1",
+                          head_cell: "text-[#C8A97E] rounded-md font-medium text-[0.8rem] text-center",
+                          cell: "text-center text-sm relative",
+                          day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center hover:bg-gray-800/50 rounded-md mx-auto",
                           day_selected: "bg-[#C8A97E] text-black hover:bg-[#C8A97E] hover:text-black",
                           day_today: "bg-[#C8A97E]/10 text-[#C8A97E] font-semibold",
                           table: "w-full border-collapse",
-                          months: "flex flex-col",
+                          months: "flex flex-col space-y-2",
                           month: "space-y-1"
                         }}
                       />
@@ -264,7 +298,7 @@ export default function GoogleCalendarPicker({
                               {t('booking.selectTime', 'Uhrzeit auswählen')}
                             </h4>
                             
-                            <div className="grid grid-cols-1 gap-1.5">
+                            <div className="grid grid-cols-1 gap-1.5 max-h-[180px] overflow-y-auto pr-1 custom-scrollbar">
                               {DEFAULT_TIME_SLOTS.map((slot) => (
                                 <motion.button
                                   key={slot.value}
