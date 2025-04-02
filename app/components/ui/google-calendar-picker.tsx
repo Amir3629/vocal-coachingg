@@ -49,83 +49,70 @@ const isWeekend = (date: Date) => {
 
 // Add custom styling to hide Saturday and Sunday columns and enforce 5-col grid
 const customCalendarStyles = `
-  /* Calendar table layout */
-  .rdp-table {
-    width: 100% !important;
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-  }
-
-  /* Hide weekend columns */
+  /* Hide weekend days */
   .rdp-tbody tr td:first-child,
-  .rdp-tbody tr td:last-child,
+  .rdp-tbody tr td:last-child {
+    display: none;
+  }
+  
   .rdp-head_cell:first-child,
   .rdp-head_cell:last-child {
-    display: none !important;
+    display: none;
   }
 
-  /* Fix header row */
+  .rdp-table {
+    width: 100%;
+  }
+
   .rdp-head_row {
-    display: grid !important;
-    grid-template-columns: repeat(5, 1fr) !important;
-    margin-bottom: 0.5rem !important;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
   }
 
-  /* Fix day rows */
   .rdp-tbody tr {
-    display: grid !important;
-    grid-template-columns: repeat(5, 1fr) !important;
-    gap: 2px !important;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
   }
 
-  /* Cell styling */
   .rdp-cell {
-    aspect-ratio: 1 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    flex: 1;
+    text-align: center;
   }
 
   .rdp-head_cell {
-    padding: 0.5rem 0 !important;
-    text-align: center !important;
-    font-weight: 500 !important;
-  }
-
-  /* Month navigation */
-  .rdp-nav {
-    padding: 0 0.5rem !important;
-  }
-
-  /* Custom scrollbar */
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 4px !important;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: #1A1A1A !important;
-    border-radius: 2px !important;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #333 !important;
-    border-radius: 2px !important;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #444 !important;
+    flex: 1;
+    text-align: center;
   }
 
   /* Fix calendar container height */
   .calendar-container {
-    height: 300px !important;
-    display: flex !important;
-    flex-direction: column !important;
+    height: 320px;
   }
 
   .time-slots-container {
-    max-height: 300px !important;
-    overflow-y: auto !important;
+    height: 320px;
+    overflow-y: auto;
+  }
+
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #1A1A1A;
+    border-radius: 2px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 2px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #444;
   }
 `;
 
@@ -274,7 +261,7 @@ export default function GoogleCalendarPicker({
                   </div>
                   
                   <div className="p-3 flex flex-row justify-center items-start gap-3">
-                    <div className="w-[250px] calendar-container">
+                    <div className="w-[260px] calendar-container">
                       <Calendar
                         mode="single"
                         selected={date}
@@ -283,14 +270,14 @@ export default function GoogleCalendarPicker({
                         initialFocus
                         classNames={{
                           head_row: "w-full",
-                          head_cell: "text-[#C8A97E] font-medium text-[0.8rem]",
+                          head_cell: "text-[#C8A97E] font-medium text-[0.8rem] pb-1",
                           cell: "text-center text-sm p-0.5",
                           day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center hover:bg-gray-800/50 rounded-md mx-auto",
                           day_selected: "bg-[#C8A97E] text-black hover:bg-[#C8A97E] hover:text-black",
                           day_today: "bg-[#C8A97E]/10 text-[#C8A97E] font-semibold",
                           table: "w-full",
                           months: "flex flex-col space-y-2",
-                          month: "space-y-2"
+                          month: "space-y-1"
                         }}
                       />
                     </div>
@@ -303,14 +290,16 @@ export default function GoogleCalendarPicker({
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
-                            className="w-[130px] border-l border-gray-800 pl-3 time-slots-container"
+                            className="w-[120px] border-l border-gray-800 pl-3 time-slots-container"
                           >
-                            <h4 className="text-white text-sm font-medium mb-2 sticky top-0 bg-[#111] pt-0.5 pb-2 flex items-center">
-                              <Clock className="w-4 h-4 mr-1 text-[#C8A97E]" />
-                              {t('booking.selectTime', 'Uhrzeit auswählen')}
-                            </h4>
+                            <div className="sticky top-0 bg-[#111] pt-0.5 pb-2">
+                              <h4 className="text-white text-sm font-medium flex items-center">
+                                <Clock className="w-4 h-4 mr-1 text-[#C8A97E]" />
+                                {t('booking.selectTime', 'Uhrzeit auswählen')}
+                              </h4>
+                            </div>
                             
-                            <div className="grid grid-cols-1 gap-1.5 overflow-y-auto custom-scrollbar">
+                            <div className="grid grid-cols-1 gap-1.5 overflow-y-auto custom-scrollbar pr-1">
                               {DEFAULT_TIME_SLOTS.map((slot) => (
                                 <motion.button
                                   key={slot.value}
