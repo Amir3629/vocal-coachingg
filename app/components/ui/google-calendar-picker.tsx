@@ -59,21 +59,31 @@ const customCalendarStyles = `
     display: none !important;
   }
 
+  /* Ensure table takes full width */
   .rdp-table {
     width: 100% !important;
+    max-width: 100% !important; 
   }
 
-  .rdp-month {
+  .rdp-tbody {
+    display: block;
+  }
+  
+  /* Force rows into a 5-column layout */
+  .rdp-row {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
     width: 100% !important;
+    gap: 2px; /* Add small gap between cells */
   }
-
-  .rdp-caption {
-    padding: 0 0.5rem !important;
-    margin-bottom: 0.5rem !important;
-  }
-
-  .rdp-nav {
-    gap: 0.5rem !important;
+  
+  /* Remove default cell padding/margin if needed */
+  .rdp-cell {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important; /* Ensure cells fill grid column */
+    display: flex;
+    justify-content: center;
   }
 `;
 
@@ -95,7 +105,7 @@ export default function GoogleCalendarPicker({
   const [showTimeSlots, setShowTimeSlots] = useState(false);
 
   // Determine the container width based on content
-  const containerWidth = showTimeSlots && date ? 'w-[380px]' : 'w-[270px]';
+  const containerWidth = showTimeSlots && date ? 'w-[400px]' : 'w-[260px]';
 
   // Update the parent component when a date and time are selected
   useEffect(() => {
@@ -221,8 +231,8 @@ export default function GoogleCalendarPicker({
                     </button>
                   </div>
                   
-                  <div className="p-2 flex flex-row justify-center items-start gap-1">
-                    <div className="w-[240px]">
+                  <div className="p-2 flex flex-row justify-center items-start gap-2">
+                    <div className="w-[240px] overflow-hidden">
                       <Calendar
                         mode="single"
                         selected={date}
@@ -230,15 +240,15 @@ export default function GoogleCalendarPicker({
                         disabled={disabledDays}
                         initialFocus
                         classNames={{
-                          head_row: "flex justify-between w-full",
-                          head_cell: "text-[#C8A97E] rounded-md font-medium text-[0.8rem] text-center",
-                          cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-[#C8A97E]/10",
-                          day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center hover:bg-gray-800/50 rounded-md mx-auto",
+                          head_row: "grid grid-cols-5 w-full gap-1 mb-1",
+                          head_cell: "text-[#C8A97E] rounded-md font-medium text-[0.8rem] text-center p-0",
+                          cell: "p-0 m-0",
+                          day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center hover:bg-gray-800/50 rounded-md",
                           day_selected: "bg-[#C8A97E] text-black hover:bg-[#C8A97E] hover:text-black",
                           day_today: "bg-[#C8A97E]/10 text-[#C8A97E] font-semibold",
                           table: "w-full border-collapse",
-                          months: "flex flex-col space-y-2",
-                          month: "space-y-2"
+                          months: "flex flex-col",
+                          month: "space-y-1"
                         }}
                       />
                     </div>
@@ -251,7 +261,7 @@ export default function GoogleCalendarPicker({
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
-                            className="w-[110px] border-l border-gray-800 pl-2"
+                            className="w-[120px] border-l border-gray-800 pl-2"
                           >
                             <h4 className="text-white text-sm font-medium mb-2 flex items-center">
                               <Clock className="w-4 h-4 mr-1 text-[#C8A97E]" />
