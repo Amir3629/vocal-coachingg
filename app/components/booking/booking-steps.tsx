@@ -8,24 +8,36 @@ export default function BookingSteps() {
   const { t } = useTranslation();
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
+          initial={{ opacity: 0, y: 50, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 50, scale: 0.95 }}
+          transition={{ 
+            duration: 0.8,
+            ease: [0.4, 0, 0.2, 1],
+            opacity: { duration: 0.8 },
+            y: { duration: 0.8 },
+            scale: { duration: 0.8 }
+          }}
           className="fixed bottom-4 right-4 z-50"
         >
-          <div className="bg-[#111] border border-gray-800 rounded-xl shadow-2xl p-4 max-w-sm">
+          <motion.div 
+            className="bg-[#111] border border-gray-800 rounded-xl shadow-2xl p-4 max-w-sm"
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.2 }}
+          >
             <div className="flex justify-between items-start mb-4">
               <h3 className="text-white font-medium text-lg">{t('booking.steps.title', 'Buchungsschritte')}</h3>
-              <button
+              <motion.button
                 onClick={() => setIsVisible(false)}
                 className="text-gray-400 hover:text-white transition-colors duration-200"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <X className="w-5 h-5" />
-              </button>
+              </motion.button>
             </div>
             
             <div className="space-y-4">
@@ -59,7 +71,7 @@ export default function BookingSteps() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
