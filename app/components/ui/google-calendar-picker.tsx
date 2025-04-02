@@ -226,7 +226,7 @@ export default function GoogleCalendarPicker({
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-                className="relative w-[420px] max-w-[90vw]"
+                className="relative w-[460px] max-w-[90vw]"
               >
                 <motion.div 
                   className="bg-[#111] border border-gray-800 rounded-xl shadow-2xl overflow-hidden"
@@ -244,7 +244,7 @@ export default function GoogleCalendarPicker({
                   </div>
                   
                   <div className="p-4 flex flex-row justify-center items-start gap-4">
-                    <div className="w-[280px]">
+                    <div className="w-[320px]">
                       <Calendar
                         mode="single"
                         selected={date}
@@ -258,7 +258,7 @@ export default function GoogleCalendarPicker({
                           day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center",
                           day_selected: "bg-[#C8A97E] text-black hover:bg-[#C8A97E] hover:text-black",
                           day_today: "bg-[#C8A97E]/10 text-[#C8A97E] font-semibold",
-                          table: "w-full border-separate border-spacing-1",
+                          table: "w-full border-collapse",
                           months: "flex flex-col space-y-4",
                           month: "space-y-4"
                         }}
