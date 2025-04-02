@@ -1,3 +1,5 @@
+"use client"
+
 import type React from "react"
 import "./globals.css"
 import "./styles/responsive.css"
@@ -61,6 +63,31 @@ export const metadata: Metadata = {
     ]
   },
   manifest: process.env.NODE_ENV === 'production' ? '/vocal-coaching/favicon/site.webmanifest' : '/favicon/site.webmanifest',
+}
+
+export function Scripts() {
+  return (
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `
+          document.addEventListener('DOMContentLoaded', function() {
+            // Initialize any MutationObservers here
+            if (typeof MutationObserver !== 'undefined' && document.body) {
+              // Safe to use MutationObserver now
+              const observer = new MutationObserver(function() {
+                // Your mutation observer logic
+              });
+              
+              observer.observe(document.body, {
+                childList: true,
+                subtree: true
+              });
+            }
+          });
+        `,
+      }}
+    />
+  );
 }
 
 export default function RootLayout({
@@ -136,6 +163,7 @@ export default function RootLayout({
             {children}
           </RootClient>
         </MediaProvider>
+        <Scripts />
       </body>
     </html>
   )
