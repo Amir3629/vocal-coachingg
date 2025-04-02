@@ -119,10 +119,20 @@ export default function RootLayout({
               }
               
               // Run checks on DOM changes
-              new MutationObserver(checkForModals).observe(
-                document.body, 
-                { childList: true, subtree: true }
-              );
+              if (document.body) {
+                new MutationObserver(checkForModals).observe(
+                  document.body, 
+                  { childList: true, subtree: true }
+                );
+              } else {
+                // If body isn't available yet, wait for DOMContentLoaded
+                document.addEventListener('DOMContentLoaded', function() {
+                  new MutationObserver(checkForModals).observe(
+                    document.body, 
+                    { childList: true, subtree: true }
+                  );
+                });
+              }
               
               // Also check on page load
               document.addEventListener('DOMContentLoaded', checkForModals);

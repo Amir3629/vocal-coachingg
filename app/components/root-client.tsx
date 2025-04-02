@@ -13,15 +13,12 @@ export default function RootClient({
   className: string
 }) {
   return (
-    <html className={className}>
-      <head />
-      <body className={className}>
-        <ClientProvider>
-          {children}
-          <Footer />
-          <CookieConsent />
-        </ClientProvider>
-      </body>
-    </html>
+    <>
+      <ClientProvider>
+        {children}
+        <Footer />
+        <CookieConsent />
+      </ClientProvider>
+    </>
   )
 } 
