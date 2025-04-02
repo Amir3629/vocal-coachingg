@@ -49,71 +49,83 @@ const isWeekend = (date: Date) => {
 
 // Add custom styling to hide Saturday and Sunday columns and enforce 5-col grid
 const customCalendarStyles = `
-  /* Hide weekend days */
-  .rdp-tbody tr td:first-child,
-  .rdp-tbody tr td:last-child {
-    display: none !important;
+  /* Calendar table layout */
+  .rdp-table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
   }
-  
-  /* Hide weekend headers */
+
+  /* Hide weekend columns */
+  .rdp-tbody tr td:first-child,
+  .rdp-tbody tr td:last-child,
   .rdp-head_cell:first-child,
   .rdp-head_cell:last-child {
     display: none !important;
   }
 
-  /* Ensure table takes full width */
-  .rdp-table {
-    width: 100% !important;
-    table-layout: fixed !important;
-  }
-
-  /* Make rows display properly */
-  .rdp-tbody tr {
-    display: grid !important;
-    grid-template-columns: repeat(5, 1fr) !important;
-    width: 100% !important;
-  }
-
-  /* Header row styling */
+  /* Fix header row */
   .rdp-head_row {
     display: grid !important;
     grid-template-columns: repeat(5, 1fr) !important;
-    width: 100% !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Fix day rows */
+  .rdp-tbody tr {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 2px !important;
   }
 
   /* Cell styling */
   .rdp-cell {
-    width: auto !important;
-    height: 32px !important;
+    aspect-ratio: 1 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
   }
 
   .rdp-head_cell {
-    height: 32px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    padding: 0.5rem 0 !important;
+    text-align: center !important;
+    font-weight: 500 !important;
   }
 
-  /* Custom scrollbar styling */
+  /* Month navigation */
+  .rdp-nav {
+    padding: 0 0.5rem !important;
+  }
+
+  /* Custom scrollbar */
   .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
+    width: 4px !important;
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
-    background: #1A1A1A;
-    border-radius: 3px;
+    background: #1A1A1A !important;
+    border-radius: 2px !important;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #333;
-    border-radius: 3px;
+    background: #333 !important;
+    border-radius: 2px !important;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #444;
+    background: #444 !important;
+  }
+
+  /* Fix calendar container height */
+  .calendar-container {
+    height: 300px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .time-slots-container {
+    max-height: 300px !important;
+    overflow-y: auto !important;
   }
 `;
 
@@ -261,8 +273,8 @@ export default function GoogleCalendarPicker({
                     </button>
                   </div>
                   
-                  <div className="p-3 flex flex-row justify-center items-start gap-2">
-                    <div className="w-[250px]">
+                  <div className="p-3 flex flex-row justify-center items-start gap-3">
+                    <div className="w-[250px] calendar-container">
                       <Calendar
                         mode="single"
                         selected={date}
@@ -270,13 +282,13 @@ export default function GoogleCalendarPicker({
                         disabled={disabledDays}
                         initialFocus
                         classNames={{
-                          head_row: "w-full mb-2",
-                          head_cell: "text-[#C8A97E] font-medium text-[0.8rem] text-center pb-2",
-                          cell: "text-center text-sm relative",
+                          head_row: "w-full",
+                          head_cell: "text-[#C8A97E] font-medium text-[0.8rem]",
+                          cell: "text-center text-sm p-0.5",
                           day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center hover:bg-gray-800/50 rounded-md mx-auto",
                           day_selected: "bg-[#C8A97E] text-black hover:bg-[#C8A97E] hover:text-black",
                           day_today: "bg-[#C8A97E]/10 text-[#C8A97E] font-semibold",
-                          table: "w-full border-collapse",
+                          table: "w-full",
                           months: "flex flex-col space-y-2",
                           month: "space-y-2"
                         }}
@@ -291,14 +303,14 @@ export default function GoogleCalendarPicker({
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
-                            className="w-[130px] border-l border-gray-800 pl-3"
+                            className="w-[130px] border-l border-gray-800 pl-3 time-slots-container"
                           >
-                            <h4 className="text-white text-sm font-medium mb-2 flex items-center">
+                            <h4 className="text-white text-sm font-medium mb-2 sticky top-0 bg-[#111] pt-0.5 pb-2 flex items-center">
                               <Clock className="w-4 h-4 mr-1 text-[#C8A97E]" />
                               {t('booking.selectTime', 'Uhrzeit auswählen')}
                             </h4>
                             
-                            <div className="grid grid-cols-1 gap-1.5 max-h-[180px] overflow-y-auto pr-1 custom-scrollbar">
+                            <div className="grid grid-cols-1 gap-1.5 overflow-y-auto custom-scrollbar">
                               {DEFAULT_TIME_SLOTS.map((slot) => (
                                 <motion.button
                                   key={slot.value}
