@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import "./globals.css"
 import "./styles/responsive.css"
@@ -11,6 +9,7 @@ import type { Metadata, Viewport } from "next"
 import { Inter, Playfair_Display, Cormorant_Garamond, Montserrat, Roboto } from "next/font/google"
 import RootClient from "./components/root-client"
 import { MediaProvider } from "./components/media-context"
+import ClientScripts from "./components/client-scripts"
 
 const inter = Inter({ subsets: ["latin"] })
 const playfair = Playfair_Display({
@@ -50,44 +49,19 @@ export const metadata: Metadata = {
   description: "Professional vocal coaching and performance in Berlin",
   icons: {
     icon: [
-      { url: process.env.NODE_ENV === 'production' ? '/vocal-coaching/favicon.ico' : '/favicon.ico' },
-      { url: process.env.NODE_ENV === 'production' ? '/vocal-coaching/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', type: 'image/png', sizes: '64x64' }
+      { url: process.env.NODE_ENV === 'production' ? '/vocal-coachingg/favicon.ico' : '/favicon.ico' },
+      { url: process.env.NODE_ENV === 'production' ? '/vocal-coachingg/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', type: 'image/png', sizes: '64x64' }
     ],
-    shortcut: { url: process.env.NODE_ENV === 'production' ? '/vocal-coaching/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', sizes: '196x196' },
-    apple: { url: process.env.NODE_ENV === 'production' ? '/vocal-coaching/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', sizes: '180x180' },
+    shortcut: { url: process.env.NODE_ENV === 'production' ? '/vocal-coachingg/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', sizes: '196x196' },
+    apple: { url: process.env.NODE_ENV === 'production' ? '/vocal-coachingg/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG', sizes: '180x180' },
     other: [
       {
-        url: process.env.NODE_ENV === 'production' ? '/vocal-coaching/favicon/site.webmanifest' : '/favicon/site.webmanifest',
+        url: process.env.NODE_ENV === 'production' ? '/vocal-coachingg/favicon/site.webmanifest' : '/favicon/site.webmanifest',
         rel: 'manifest'
       }
     ]
   },
-  manifest: process.env.NODE_ENV === 'production' ? '/vocal-coaching/favicon/site.webmanifest' : '/favicon/site.webmanifest',
-}
-
-export function Scripts() {
-  return (
-    <script
-      dangerouslySetInnerHTML={{
-        __html: `
-          document.addEventListener('DOMContentLoaded', function() {
-            // Initialize any MutationObservers here
-            if (typeof MutationObserver !== 'undefined' && document.body) {
-              // Safe to use MutationObserver now
-              const observer = new MutationObserver(function() {
-                // Your mutation observer logic
-              });
-              
-              observer.observe(document.body, {
-                childList: true,
-                subtree: true
-              });
-            }
-          });
-        `,
-      }}
-    />
-  );
+  manifest: process.env.NODE_ENV === 'production' ? '/vocal-coachingg/favicon/site.webmanifest' : '/favicon/site.webmanifest',
 }
 
 export default function RootLayout({
@@ -100,62 +74,15 @@ export default function RootLayout({
       <head>
         <link 
           rel="icon" 
-          href={process.env.NODE_ENV === 'production' ? '/vocal-coaching/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG'} 
+          href={process.env.NODE_ENV === 'production' ? '/vocal-coachingg/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG'} 
           sizes="64x64" 
           type="image/png" 
         />
         <link 
           rel="apple-touch-icon" 
-          href={process.env.NODE_ENV === 'production' ? '/vocal-coaching/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG'} 
+          href={process.env.NODE_ENV === 'production' ? '/vocal-coachingg/images/logo/ml-logo.PNG' : '/images/logo/ml-logo.PNG'} 
           sizes="180x180" 
         />
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            // Set scrollRestoration to auto - let the browser handle it naturally
-            if ('scrollRestoration' in history) {
-              history.scrollRestoration = 'auto';
-            }
-            
-            // ULTRA-SIMPLE EMERGENCY FIX
-            (function() {
-              let savedScrollY = 0;
-              
-              // Check for modals and handle scroll locking
-              function checkForModals() {
-                const hasModal = document.querySelector('[role="dialog"], .modal, .fixed.inset-0');
-                const isLocked = document.body.classList.contains('modal-open');
-                
-                if (hasModal && !isLocked) {
-                  // Save position and lock
-                  savedScrollY = window.scrollY;
-                  document.body.classList.add('modal-open');
-                  document.body.style.overflow = 'hidden';
-                  document.body.style.height = '100%';
-                  document.body.style.position = 'relative';
-                } 
-                else if (!hasModal && isLocked) {
-                  // Unlock
-                  document.body.classList.remove('modal-open');
-                  document.body.style.overflow = '';
-                  document.body.style.height = '';
-                  document.body.style.position = '';
-                  
-                  // Restore scroll position directly
-                  window.scrollTo(0, savedScrollY);
-                }
-              }
-              
-              // Run checks on DOM changes
-              new MutationObserver(checkForModals).observe(
-                document.body, 
-                { childList: true, subtree: true }
-              );
-              
-              // Also check on page load
-              document.addEventListener('DOMContentLoaded', checkForModals);
-            })();
-          `
-        }} />
       </head>
       <body className={roboto.className}>
         <MediaProvider>
@@ -163,7 +90,7 @@ export default function RootLayout({
             {children}
           </RootClient>
         </MediaProvider>
-        <Scripts />
+        <ClientScripts />
       </body>
     </html>
   )
