@@ -50,32 +50,17 @@ const isWeekend = (date: Date) => {
 // Add custom styling to hide Saturday and Sunday columns
 const customCalendarStyles = `
   .rdp-day_saturday,
-  .rdp-day_sunday,
-  .rdp-day[aria-label*="Samstag"],
-  .rdp-day[aria-label*="Sonntag"] {
+  .rdp-day_sunday {
     display: none !important;
   }
   
-  .rdp-head_cell:last-child,
-  .rdp-head_cell:nth-child(6),
-  .rdp-head_cell:first-child {
+  .rdp-head_cell:first-child,
+  .rdp-head_cell:last-child {
     display: none !important;
-  }
-  
-  .rdp-row {
-    display: grid !important;
-    grid-template-columns: repeat(5, 1fr) !important;
-    width: 100% !important;
-    justify-items: center !important;
-  }
-
-  .rdp-cell {
-    width: auto !important;
   }
 
   .rdp-table {
     width: 100% !important;
-    display: block !important;
   }
 
   .rdp-month {
@@ -234,7 +219,7 @@ export default function GoogleCalendarPicker({
                   </div>
                   
                   <div className="p-2 flex flex-row justify-center items-start gap-2">
-                    <div className="w-[260px]">
+                    <div className="w-[280px]">
                       <Calendar
                         mode="single"
                         selected={date}
@@ -242,15 +227,15 @@ export default function GoogleCalendarPicker({
                         disabled={disabledDays}
                         initialFocus
                         classNames={{
-                          head_row: "grid grid-cols-5 w-full",
-                          head_cell: "text-[#C8A97E] rounded-md w-8 font-medium text-[0.8rem] text-center",
+                          head_row: "flex justify-between w-full",
+                          head_cell: "text-[#C8A97E] rounded-md font-medium text-[0.8rem] text-center",
                           cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-[#C8A97E]/10",
-                          day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center hover:bg-gray-800/50 rounded-md",
+                          day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center hover:bg-gray-800/50 rounded-md mx-auto",
                           day_selected: "bg-[#C8A97E] text-black hover:bg-[#C8A97E] hover:text-black",
                           day_today: "bg-[#C8A97E]/10 text-[#C8A97E] font-semibold",
-                          table: "w-full border-collapse",
-                          months: "flex flex-col space-y-2",
-                          month: "space-y-2"
+                          table: "w-full border-collapse space-y-1",
+                          months: "flex flex-col space-y-3",
+                          month: "space-y-3"
                         }}
                       />
                     </div>
