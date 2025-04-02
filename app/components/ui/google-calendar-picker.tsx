@@ -47,72 +47,31 @@ const isWeekend = (date: Date) => {
   return date.getDay() === 0 || date.getDay() === 6;
 };
 
-// Add custom styling to hide Saturday and Sunday columns and enforce 5-col grid
+// Add custom styling to hide Saturday and Sunday columns
 const customCalendarStyles = `
-  /* Hide weekend days */
-  .rdp-tbody tr td:first-child,
-  .rdp-tbody tr td:last-child {
-    display: none;
+  .rdp-day_saturday,
+  .rdp-day_sunday,
+  .rdp-day[aria-label*="Samstag"],
+  .rdp-day[aria-label*="Sonntag"] {
+    display: none !important;
   }
   
-  .rdp-head_cell:first-child,
-  .rdp-head_cell:last-child {
-    display: none;
+  .rdp-head_cell:last-child,
+  .rdp-head_cell:nth-child(6),
+  .rdp-head_cell:first-child {
+    display: none !important;
+  }
+  
+  .rdp-row {
+    justify-content: space-around !important;
   }
 
   .rdp-table {
-    width: 100%;
+    width: 100% !important;
   }
 
-  .rdp-head_row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-  }
-
-  .rdp-tbody tr {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.25rem;
-  }
-
-  .rdp-cell {
-    flex: 1;
-    text-align: center;
-  }
-
-  .rdp-head_cell {
-    flex: 1;
-    text-align: center;
-  }
-
-  /* Fix calendar container height */
-  .calendar-container {
-    height: 320px;
-  }
-
-  .time-slots-container {
-    height: 320px;
-    overflow-y: auto;
-  }
-
-  /* Custom scrollbar */
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: #1A1A1A;
-    border-radius: 2px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #333;
-    border-radius: 2px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #444;
+  .rdp-caption {
+    padding: 0 1rem;
   }
 `;
 
@@ -132,9 +91,6 @@ export default function GoogleCalendarPicker({
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [showTimeSlots, setShowTimeSlots] = useState(false);
-
-  // Determine the container width based on content
-  const containerWidth = showTimeSlots && date ? 'w-[420px]' : 'w-[280px]';
 
   // Update the parent component when a date and time are selected
   useEffect(() => {
@@ -243,14 +199,14 @@ export default function GoogleCalendarPicker({
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-                className={`relative ${containerWidth} max-w-[90vw]`}
+                className="relative w-[440px] max-w-[90vw]"
               >
                 <motion.div 
                   className="bg-[#111] border border-gray-800 rounded-xl shadow-2xl overflow-hidden"
                   animate={{ scale: isClosing ? 0.95 : 1, opacity: isClosing ? 0 : 1 }}
                   transition={{ duration: 0.8 }}
                 >
-                  <div className="flex justify-between items-center p-2 border-b border-gray-800">
+                  <div className="flex justify-between items-center p-3 border-b border-gray-800">
                     <h3 className="text-white font-medium text-lg">{t('booking.selectDate', 'Datum auswählen')}</h3>
                     <button 
                       onClick={() => setIsOpen(false)} 
@@ -261,7 +217,7 @@ export default function GoogleCalendarPicker({
                   </div>
                   
                   <div className="p-3 flex flex-row justify-center items-start gap-3">
-                    <div className="w-[260px] calendar-container">
+                    <div className="w-[280px]">
                       <Calendar
                         mode="single"
                         selected={date}
@@ -269,15 +225,15 @@ export default function GoogleCalendarPicker({
                         disabled={disabledDays}
                         initialFocus
                         classNames={{
-                          head_row: "w-full",
-                          head_cell: "text-[#C8A97E] font-medium text-[0.8rem] pb-1",
-                          cell: "text-center text-sm p-0.5",
-                          day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center hover:bg-gray-800/50 rounded-md mx-auto",
+                          head_row: "flex justify-between w-full",
+                          head_cell: "text-[#C8A97E] rounded-md w-9 font-medium text-[0.8rem] mx-0.5 text-center",
+                          cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-[#C8A97E]/10 m-0.5",
+                          day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center",
                           day_selected: "bg-[#C8A97E] text-black hover:bg-[#C8A97E] hover:text-black",
                           day_today: "bg-[#C8A97E]/10 text-[#C8A97E] font-semibold",
                           table: "w-full",
-                          months: "flex flex-col space-y-2",
-                          month: "space-y-1"
+                          months: "flex flex-col space-y-4",
+                          month: "space-y-4 w-full"
                         }}
                       />
                     </div>
@@ -290,16 +246,14 @@ export default function GoogleCalendarPicker({
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
-                            className="w-[120px] border-l border-gray-800 pl-3 time-slots-container"
+                            className="w-[120px] border-l border-gray-800 pl-3"
                           >
-                            <div className="sticky top-0 bg-[#111] pt-0.5 pb-2">
-                              <h4 className="text-white text-sm font-medium flex items-center">
-                                <Clock className="w-4 h-4 mr-1 text-[#C8A97E]" />
-                                {t('booking.selectTime', 'Uhrzeit auswählen')}
-                              </h4>
-                            </div>
+                            <h4 className="text-white text-sm font-medium mb-3 flex items-center">
+                              <Clock className="w-4 h-4 mr-2 text-[#C8A97E]" />
+                              {t('booking.selectTime', 'Uhrzeit auswählen')}
+                            </h4>
                             
-                            <div className="grid grid-cols-1 gap-1.5 overflow-y-auto custom-scrollbar pr-1">
+                            <div className="grid grid-cols-1 gap-1.5">
                               {DEFAULT_TIME_SLOTS.map((slot) => (
                                 <motion.button
                                   key={slot.value}
