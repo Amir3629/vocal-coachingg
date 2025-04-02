@@ -13,6 +13,7 @@ interface GoogleCalendarPickerProps {
   className?: string
   showTimeSelector?: boolean
   disablePastDates?: boolean
+  allowWeekends?: boolean
 }
 
 // Interface for time slots
@@ -47,23 +48,25 @@ const isWeekend = (date: Date) => {
   return date.getDay() === 0 || date.getDay() === 6;
 };
 
-// Add custom styling to hide Saturday and Sunday columns
-const customCalendarStyles = `
-  .rdp-day_saturday,
-  .rdp-day_sunday,
-  .rdp-day[aria-label*="Samstag"],
-  .rdp-day[aria-label*="Sonntag"] {
-    display: none !important;
-  }
-  
-  .rdp-head_cell:last-child,
-  .rdp-head_cell:nth-child(6),
-  .rdp-head_cell:first-child {
-    display: none !important;
-  }
+// Add custom styling to hide Saturday and Sunday columns conditionally
+const getCalendarStyles = (allowWeekends: boolean) => `
+  ${!allowWeekends ? `
+    .rdp-day_saturday,
+    .rdp-day_sunday,
+    .rdp-day[aria-label*="Samstag"],
+    .rdp-day[aria-label*="Sonntag"] {
+      display: none !important;
+    }
+    
+    .rdp-head_cell:last-child,
+    .rdp-head_cell:nth-child(6),
+    .rdp-head_cell:first-child {
+      display: none !important;
+    }
+  ` : ''}
   
   .rdp-row {
-    justify-content: space-around !important;
+    justify-content: ${allowWeekends ? 'space-between' : 'space-around'} !important;
   }
 
   .rdp-table {
@@ -107,7 +110,8 @@ export default function GoogleCalendarPicker({
   placeholder = "Datum auswählen",
   className = "",
   showTimeSelector = true,
-  disablePastDates = true
+  disablePastDates = true,
+  allowWeekends = false
 }: GoogleCalendarPickerProps) {
   const { t } = useTranslation();
   const [date, setDate] = useState<Date | undefined>(value);
@@ -125,12 +129,12 @@ export default function GoogleCalendarPicker({
     }
   }, [date, onChange]);
 
-  // Disable past dates and weekends
+  // Disable past dates and weekends (if not allowed)
   const disabledDays = (day: Date) => {
     if (disablePastDates && isPastDate(day)) {
       return true;
     }
-    return isWeekend(day);
+    return !allowWeekends && isWeekend(day);
   };
 
   // Format date for display
@@ -176,7 +180,7 @@ export default function GoogleCalendarPicker({
 
   return (
     <div className="relative">
-      <style jsx global>{customCalendarStyles}</style>
+      <style jsx global>{getCalendarStyles(allowWeekends)}</style>
       <style jsx global>{scrollbarStyles}</style>
       
       <div 
