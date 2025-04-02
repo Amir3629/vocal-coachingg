@@ -92,31 +92,6 @@ export default function GoogleCalendarPicker({
   const [isClosing, setIsClosing] = useState(false);
   const [showTimeSlots, setShowTimeSlots] = useState(false);
 
-  // Handle opening and closing with blur effect
-  const handleOpen = () => {
-    document.body.style.transition = 'filter 0.4s ease-out';
-    document.body.style.filter = 'blur(4px)';
-    setIsOpen(true);
-  };
-
-  const handleClose = () => {
-    setIsClosing(true);
-    document.body.style.transition = 'filter 0.4s ease-out';
-    document.body.style.filter = 'blur(0px)';
-    setTimeout(() => {
-      setIsOpen(false);
-      setIsClosing(false);
-    }, 400);
-  };
-
-  // Cleanup blur effect when component unmounts
-  useEffect(() => {
-    return () => {
-      document.body.style.filter = '';
-      document.body.style.transition = '';
-    };
-  }, []);
-
   // Update the parent component when a date and time are selected
   useEffect(() => {
     if (date) {
@@ -163,12 +138,11 @@ export default function GoogleCalendarPicker({
         
         // Start closing the calendar smoothly
         setTimeout(() => {
-          document.body.style.filter = 'blur(0px)';
           setIsClosing(true);
           setTimeout(() => {
             setIsOpen(false);
             setIsClosing(false);
-          }, 400);
+          }, 300);
         }, 500);
       }, 500);
     }, 200);
@@ -180,7 +154,7 @@ export default function GoogleCalendarPicker({
       
       <div 
         className={`flex items-center justify-between bg-[#1A1A1A] border border-gray-700 rounded-lg px-4 py-3 cursor-pointer hover:border-[#C8A97E] transition-colors ${className}`}
-        onClick={handleOpen}
+        onClick={() => setIsOpen(prev => !prev)}
       >
         <div className="flex items-center">
           <CalendarIcon className="w-5 h-5 text-[#C8A97E] mr-2" />
@@ -197,7 +171,6 @@ export default function GoogleCalendarPicker({
               setDate(undefined);
               setTimeSlot(undefined);
               setIsConfirmed(false);
-              onChange(undefined);
             }}
             className="text-gray-400 hover:text-white"
           >
@@ -208,116 +181,126 @@ export default function GoogleCalendarPicker({
       
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-            className="fixed inset-0 z-50 flex items-center justify-center"
-            style={{ background: 'rgba(0, 0, 0, 0.5)' }}
-            onClick={handleClose}
-          >
-            <motion.div 
-              className="bg-[#111] border border-gray-800 rounded-lg shadow-xl overflow-hidden max-w-[90vw] w-auto"
-              onClick={e => e.stopPropagation()}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
+          <>
+            {/* Backdrop blur effect */}
+            <motion.div
+              initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+              animate={{ opacity: 1, backdropFilter: "blur(8px)" }}
+              exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+              transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+              className="fixed inset-0 bg-black/60 z-40"
+              style={{ backdropFilter: "blur(8px)" }}
+              onClick={() => setIsOpen(false)}
+            />
+
+            {/* Calendar Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-auto min-w-[320px] max-w-[90vw]"
             >
-              <div className="flex justify-between items-center p-3 border-b border-gray-800">
-                <h3 className="text-white font-medium">{t('booking.selectDate', 'Datum auswählen')}</h3>
-                <button onClick={handleClose} className="text-gray-400 hover:text-white">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              
-              <div className="p-3 flex flex-col md:flex-row">
-                <div className="md:min-w-[280px]">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={handleDateSelect}
-                    disabled={disabledDays}
-                    initialFocus
-                    classNames={{
-                      head_row: "flex justify-between w-full",
-                      head_cell: "text-[#C8A97E] rounded-md w-8 font-medium text-[0.8rem] mx-0.5 text-center",
-                    }}
-                  />
+              <motion.div 
+                className="bg-[#111] border border-gray-800 rounded-xl shadow-2xl overflow-hidden"
+                animate={{ scale: isClosing ? 0.95 : 1, opacity: isClosing ? 0 : 1 }}
+                transition={{ duration: 0.8 }}
+              >
+                <div className="flex justify-between items-center p-4 border-b border-gray-800">
+                  <h3 className="text-white font-medium">{t('booking.selectDate', 'Datum auswählen')}</h3>
+                  <button 
+                    onClick={() => setIsOpen(false)} 
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
                 
-                {showTimeSelector && (
-                  <AnimatePresence>
-                    {showTimeSlots && date && (
-                      <motion.div 
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-                        className="md:ml-4 mt-4 md:mt-0 md:pl-4 md:border-l md:border-gray-800"
-                      >
-                        <h4 className="text-white text-sm font-medium mb-3 flex items-center">
-                          <Clock className="w-4 h-4 mr-2 text-[#C8A97E]" />
-                          {t('booking.selectTime', 'Uhrzeit auswählen')}
-                        </h4>
-                        <div className="grid grid-cols-2 gap-2">
-                          {DEFAULT_TIME_SLOTS.map((slot, index) => (
-                            <motion.button
-                              key={slot.value}
-                              onClick={() => handleTimeSelect(slot.value)}
-                              className={`px-3 py-2 rounded-md text-sm transition-all ${
-                                timeSlot === slot.value
-                                  ? 'bg-[#C8A97E] text-black font-medium'
-                                  : 'bg-[#1A1A1A] text-white hover:bg-[#C8A97E]/20'
-                              }`}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ 
-                                duration: 0.3,
-                                delay: index * 0.05,
-                                ease: [0.4, 0, 0.2, 1]
-                              }}
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                            >
-                              {slot.label}
-                            </motion.button>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                )}
-              </div>
-              
-              <AnimatePresence>
-                {(isConfirming || isConfirmed) && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 5 }}
-                    className="p-3 border-t border-gray-800 flex items-center justify-center"
-                  >
-                    {isConfirming ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-[#C8A97E]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span className="text-sm text-gray-300">{t('booking.confirmingBooking', 'Wird bestätigt...')}</span>
-                      </>
-                    ) : (
-                      <motion.div className="flex items-center text-[#C8A97E]">
-                        <Check className="w-5 h-5 mr-2" />
-                        <span>{t('booking.bookingConfirmed', 'Termin bestätigt!')}</span>
-                      </motion.div>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                <div className="p-4 flex flex-col md:flex-row">
+                  <div className="md:min-w-[280px]">
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={handleDateSelect}
+                      disabled={disabledDays}
+                      initialFocus
+                      classNames={{
+                        head_row: "flex justify-between w-full",
+                        head_cell: "text-[#C8A97E] rounded-md w-8 font-medium text-[0.8rem] mx-0.5 text-center",
+                      }}
+                    />
+                  </div>
+                  
+                  {showTimeSelector && (
+                    <AnimatePresence>
+                      {showTimeSlots && date && (
+                        <motion.div 
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ duration: 0.6, delay: 0.2 }}
+                          className="md:ml-4 mt-4 md:mt-0 md:pl-4 md:border-l md:border-gray-800"
+                        >
+                          <h4 className="text-white text-sm font-medium mb-3 flex items-center">
+                            <Clock className="w-4 h-4 mr-2 text-[#C8A97E]" />
+                            {t('booking.selectTime', 'Uhrzeit auswählen')}
+                          </h4>
+                          
+                          <div className="grid grid-cols-2 gap-2">
+                            {DEFAULT_TIME_SLOTS.map((slot) => (
+                              <motion.button
+                                key={slot.value}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: 0.3 + parseInt(slot.value) * 0.1 }}
+                                className={`text-center px-3 py-2 rounded-md transition-all duration-300 ${
+                                  timeSlot === slot.value
+                                    ? 'bg-[#C8A97E] text-black font-medium'
+                                    : slot.available 
+                                      ? 'bg-[#1A1A1A] text-white hover:bg-[#222]'
+                                      : 'bg-[#1A1A1A]/50 text-gray-500 cursor-not-allowed'
+                                }`}
+                                onClick={() => slot.available && handleTimeSelect(slot.value)}
+                                disabled={!slot.available}
+                              >
+                                {slot.label}
+                              </motion.button>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  )}
+                </div>
+                
+                <AnimatePresence>
+                  {(isConfirming || isConfirmed) && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 5 }}
+                      className="p-4 border-t border-gray-800 flex items-center justify-center"
+                    >
+                      {isConfirming ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-[#C8A97E]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span className="text-sm text-gray-300">{t('booking.confirmingBooking', 'Wird bestätigt...')}</span>
+                        </>
+                      ) : (
+                        <motion.div className="flex items-center text-[#C8A97E]">
+                          <Check className="w-5 h-5 mr-2" />
+                          <span>{t('booking.bookingConfirmed', 'Termin bestätigt!')}</span>
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
