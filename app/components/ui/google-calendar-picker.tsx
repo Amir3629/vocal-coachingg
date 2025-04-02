@@ -47,7 +47,7 @@ const isWeekend = (date: Date) => {
   return date.getDay() === 0 || date.getDay() === 6;
 };
 
-// Add custom styling to hide Saturday and Sunday columns
+// Add custom styling to hide Saturday and Sunday columns and enforce 5-col grid
 const customCalendarStyles = `
   .rdp-day_saturday,
   .rdp-day_sunday {
@@ -59,31 +59,27 @@ const customCalendarStyles = `
     display: none !important;
   }
 
-  /* Ensure table takes full width */
   .rdp-table {
     width: 100% !important;
     max-width: 100% !important; 
   }
 
-  .rdp-tbody {
-    display: block;
-  }
-  
-  /* Force rows into a 5-column layout */
+  .rdp-head_row,
   .rdp-row {
     display: grid !important;
     grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
     width: 100% !important;
-    gap: 2px; /* Add small gap between cells */
+    gap: 2px; /* Adjust gap as needed */
   }
   
-  /* Remove default cell padding/margin if needed */
-  .rdp-cell {
+  .rdp-cell,
+  .rdp-head_cell {
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important; /* Ensure cells fill grid column */
     display: flex;
     justify-content: center;
+    align-items: center; /* Vertically center content */
   }
 `;
 
@@ -105,7 +101,7 @@ export default function GoogleCalendarPicker({
   const [showTimeSlots, setShowTimeSlots] = useState(false);
 
   // Determine the container width based on content
-  const containerWidth = showTimeSlots && date ? 'w-[400px]' : 'w-[260px]';
+  const containerWidth = showTimeSlots && date ? 'w-[390px]' : 'w-[250px]';
 
   // Update the parent component when a date and time are selected
   useEffect(() => {
@@ -232,18 +228,18 @@ export default function GoogleCalendarPicker({
                   </div>
                   
                   <div className="p-2 flex flex-row justify-center items-start gap-2">
-                    <div className="w-[240px] overflow-hidden">
+                    <div className="w-[230px]">
                       <Calendar
                         mode="single"
                         selected={date}
                         onSelect={handleDateSelect}
                         disabled={disabledDays}
                         initialFocus
-                        classNames={{
-                          head_row: "grid grid-cols-5 w-full gap-1 mb-1",
-                          head_cell: "text-[#C8A97E] rounded-md font-medium text-[0.8rem] text-center p-0",
-                          cell: "p-0 m-0",
-                          day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 flex items-center justify-center hover:bg-gray-800/50 rounded-md",
+                        classNames={{ 
+                          head_row: "w-full mb-1", 
+                          head_cell: "text-[#C8A97E] rounded-md font-medium text-[0.8rem] text-center p-0 h-8",
+                          cell: "p-0 m-0 h-8",
+                          day: "h-full w-full p-0 font-normal aria-selected:opacity-100 flex items-center justify-center hover:bg-gray-800/50 rounded-md",
                           day_selected: "bg-[#C8A97E] text-black hover:bg-[#C8A97E] hover:text-black",
                           day_today: "bg-[#C8A97E]/10 text-[#C8A97E] font-semibold",
                           table: "w-full border-collapse",
