@@ -94,6 +94,9 @@ export default function GoogleCalendarPicker({
   const [isClosing, setIsClosing] = useState(false);
   const [showTimeSlots, setShowTimeSlots] = useState(false);
 
+  // Determine the container width based on content
+  const containerWidth = showTimeSlots && date ? 'w-[380px]' : 'w-[270px]';
+
   // Update the parent component when a date and time are selected
   useEffect(() => {
     if (date) {
@@ -201,7 +204,7 @@ export default function GoogleCalendarPicker({
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-                className="relative w-[400px] max-w-[90vw]"
+                className={`relative ${containerWidth} max-w-[90vw]`}
               >
                 <motion.div 
                   className="bg-[#111] border border-gray-800 rounded-xl shadow-2xl overflow-hidden"
