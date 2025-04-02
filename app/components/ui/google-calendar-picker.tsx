@@ -13,7 +13,7 @@ interface GoogleCalendarPickerProps {
   className?: string
   showTimeSelector?: boolean
   disablePastDates?: boolean
-  allowWeekends?: boolean
+  disableWeekends?: boolean
 }
 
 // Interface for time slots
@@ -48,6 +48,62 @@ const isWeekend = (date: Date) => {
   return date.getDay() === 0 || date.getDay() === 6;
 };
 
+// Add custom styling to hide Saturday and Sunday columns
+const customCalendarStyles = `
+  ${disableWeekends ? `
+    .rdp-day_saturday,
+    .rdp-day_sunday,
+    .rdp-day[aria-label*="Samstag"],
+    .rdp-day[aria-label*="Sonntag"] {
+      display: none !important;
+    }
+    
+    .rdp-head_cell:last-child,
+    .rdp-head_cell:nth-child(6),
+    .rdp-head_cell:first-child {
+      display: none !important;
+    }
+    
+    .rdp-row {
+      justify-content: space-around !important;
+    }
+  ` : ''}
+
+  .rdp-table {
+    width: 100% !important;
+  }
+
+  .rdp-caption {
+    padding: 0 1rem;
+  }
+`;
+
+// Add this style block at the top of the component, after the existing customCalendarStyles
+const scrollbarStyles = `
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #1A1A1A;
+    border-radius: 20px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 20px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #444;
+  }
+  
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #333 #1A1A1A;
+  }
+`;
+
 export default function GoogleCalendarPicker({
   onChange,
   value,
@@ -55,7 +111,7 @@ export default function GoogleCalendarPicker({
   className = "",
   showTimeSelector = true,
   disablePastDates = true,
-  allowWeekends = false
+  disableWeekends = false
 }: GoogleCalendarPickerProps) {
   const { t } = useTranslation();
   const [date, setDate] = useState<Date | undefined>(value);
@@ -66,59 +122,6 @@ export default function GoogleCalendarPicker({
   const [isClosing, setIsClosing] = useState(false);
   const [showTimeSlots, setShowTimeSlots] = useState(false);
 
-  // Get dynamic styles based on allowWeekends prop
-  const dynamicStyles = `
-    ${!allowWeekends ? `
-      .rdp-day_saturday,
-      .rdp-day_sunday,
-      .rdp-day[aria-label*="Samstag"],
-      .rdp-day[aria-label*="Sonntag"] {
-        display: none !important;
-      }
-      
-      .rdp-head_cell:last-child,
-      .rdp-head_cell:nth-child(6),
-      .rdp-head_cell:first-child {
-        display: none !important;
-      }
-    ` : ''}
-    
-    .rdp-row {
-      justify-content: ${allowWeekends ? 'space-between' : 'space-around'} !important;
-    }
-
-    .rdp-table {
-      width: 100% !important;
-    }
-
-    .rdp-caption {
-      padding: 0 1rem;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 4px;
-    }
-    
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: #1A1A1A;
-      border-radius: 20px;
-    }
-    
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #333;
-      border-radius: 20px;
-    }
-    
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: #444;
-    }
-    
-    .custom-scrollbar {
-      scrollbar-width: thin;
-      scrollbar-color: #333 #1A1A1A;
-    }
-  `
-
   // Update the parent component when a date and time are selected
   useEffect(() => {
     if (date) {
@@ -126,12 +129,15 @@ export default function GoogleCalendarPicker({
     }
   }, [date, onChange]);
 
-  // Disable past dates and weekends (if not allowed)
+  // Modify the disable logic to respect the disableWeekends prop
   const disabledDays = (day: Date) => {
     if (disablePastDates && isPastDate(day)) {
       return true;
     }
-    return !allowWeekends && isWeekend(day);
+    if (disableWeekends) {
+      return isWeekend(day);
+    }
+    return false;
   };
 
   // Format date for display
@@ -177,7 +183,8 @@ export default function GoogleCalendarPicker({
 
   return (
     <div className="relative">
-      <style jsx global>{dynamicStyles}</style>
+      <style jsx global>{customCalendarStyles}</style>
+      <style jsx global>{scrollbarStyles}</style>
       
       <div 
         className={`flex items-center justify-between bg-[#1A1A1A] border border-gray-700 rounded-lg px-4 py-3 cursor-pointer hover:border-[#C8A97E] transition-colors ${className}`}

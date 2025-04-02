@@ -237,6 +237,7 @@ export default function WorkshopForm({ formData, onChange }: WorkshopFormProps) 
                 : undefined}
               placeholder={t('booking.selectDatePlaceholder', 'Datum auswählen')}
               className="mb-4"
+              disableWeekends={false}
             />
           </div>
         </div>

@@ -324,6 +324,7 @@ export default function VocalCoachingForm({ formData, onChange }: VocalCoachingF
             value={formData.preferredDate ? new Date(formData.preferredDate) : undefined}
             placeholder={t('booking.selectDatePlaceholder', 'Datum auswählen')}
             className="mb-4"
+            disableWeekends={true}
           />
         </div>
       </div>

@@ -220,7 +220,7 @@ export default function LiveSingingForm({ formData, onChange }: LiveSingingFormP
               value={formData.eventDate ? new Date(formData.eventDate) : undefined}
               placeholder={t('booking.selectDatePlaceholder', 'Datum auswählen')}
               className="mb-4"
-              allowWeekends={true}
+              disableWeekends={false}
             />
           </div>
         </div>
