@@ -226,7 +226,7 @@ export default function GoogleCalendarPicker({
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-                className="relative w-[400px] max-w-[90vw]"
+                className="relative w-[420px] max-w-[90vw]"
               >
                 <motion.div 
                   className="bg-[#111] border border-gray-800 rounded-xl shadow-2xl overflow-hidden"
@@ -244,7 +244,7 @@ export default function GoogleCalendarPicker({
                   </div>
                   
                   <div className="p-4 flex flex-row justify-center items-start gap-4">
-                    <div className="w-[300px]">
+                    <div className="w-[280px]">
                       <Calendar
                         mode="single"
                         selected={date}
@@ -273,14 +273,14 @@ export default function GoogleCalendarPicker({
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
-                            className="w-[100px] border-l border-gray-800 pl-4"
+                            className="w-[120px] border-l border-gray-800 pl-4"
                           >
-                            <h4 className="text-white text-sm font-medium mb-3 flex items-center sticky top-0">
+                            <h4 className="text-white text-sm font-medium mb-3 flex items-center sticky top-0 bg-[#111] py-1">
                               <Clock className="w-4 h-4 mr-2 text-[#C8A97E]" />
                               {t('booking.selectTime', 'Uhrzeit auswählen')}
                             </h4>
                             
-                            <div className="grid grid-cols-1 gap-2 max-h-[280px] overflow-y-auto pr-2 custom-scrollbar">
+                            <div className="grid grid-cols-1 gap-2 max-h-[280px] overflow-y-auto pr-3 custom-scrollbar">
                               {DEFAULT_TIME_SLOTS.map((slot) => (
                                 <motion.button
                                   key={slot.value}
