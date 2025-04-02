@@ -48,13 +48,17 @@ export default function ServiceCard({
   // Animation variants for the card
   const cardVariants = {
     collapsed: { 
-      height: 320
+      height: 320,
+      transition: {
+        duration: 0.6,
+        ease: [0.4, 0, 0.2, 1]
+      }
     },
     expanded: { 
       height: "auto",
       transition: { 
-        duration: 5.0,
-        ease: [0.16, 1, 0.3, 1]
+        duration: 0.6,
+        ease: [0.4, 0, 0.2, 1]
       }
     }
   };
@@ -66,8 +70,8 @@ export default function ServiceCard({
       opacity: 1,
       y: 0,
       transition: {
-        delay: i * 0.2,
-        duration: 0.6,
+        delay: i * 0.1,
+        duration: 0.4,
         ease: "easeOut"
       }
     })
@@ -97,7 +101,7 @@ export default function ServiceCard({
               className="object-cover opacity-40"
               style={{
                 filter: isHovered ? 'none' : 'blur(1px)',
-                transition: "filter 5s ease-out",
+                transition: "filter 0.6s ease-out",
                 transform: "translateZ(0)",
                 backfaceVisibility: "hidden"
               }}
@@ -147,7 +151,7 @@ export default function ServiceCard({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 1.0 }}
+              transition={{ duration: 0.4 }}
             >
               {details.includes && (
                 <div>
