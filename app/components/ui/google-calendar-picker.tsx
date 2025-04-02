@@ -75,6 +75,32 @@ const customCalendarStyles = `
   }
 `;
 
+// Add this style block at the top of the component, after the existing customCalendarStyles
+const scrollbarStyles = `
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #1A1A1A;
+    border-radius: 20px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 20px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #444;
+  }
+  
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #333 #1A1A1A;
+  }
+`;
+
 export default function GoogleCalendarPicker({
   onChange,
   value,
@@ -151,6 +177,7 @@ export default function GoogleCalendarPicker({
   return (
     <div className="relative">
       <style jsx global>{customCalendarStyles}</style>
+      <style jsx global>{scrollbarStyles}</style>
       
       <div 
         className={`flex items-center justify-between bg-[#1A1A1A] border border-gray-700 rounded-lg px-4 py-3 cursor-pointer hover:border-[#C8A97E] transition-colors ${className}`}
@@ -246,14 +273,14 @@ export default function GoogleCalendarPicker({
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
-                            className="w-[80px] border-l border-gray-800 pl-4"
+                            className="w-[100px] border-l border-gray-800 pl-4"
                           >
-                            <h4 className="text-white text-sm font-medium mb-3 flex items-center">
+                            <h4 className="text-white text-sm font-medium mb-3 flex items-center sticky top-0">
                               <Clock className="w-4 h-4 mr-2 text-[#C8A97E]" />
                               {t('booking.selectTime', 'Uhrzeit auswählen')}
                             </h4>
                             
-                            <div className="grid grid-cols-1 gap-1.5">
+                            <div className="grid grid-cols-1 gap-2 max-h-[280px] overflow-y-auto pr-2 custom-scrollbar">
                               {DEFAULT_TIME_SLOTS.map((slot) => (
                                 <motion.button
                                   key={slot.value}
@@ -264,7 +291,7 @@ export default function GoogleCalendarPicker({
                                     timeSlot === slot.value
                                       ? 'bg-[#C8A97E] text-black font-medium'
                                       : slot.available 
-                                        ? 'bg-[#1A1A1A] text-white hover:bg-[#222]'
+                                        ? 'bg-[#222] text-white hover:bg-[#2A2A2A]'
                                         : 'bg-[#1A1A1A]/50 text-gray-500 cursor-not-allowed'
                                   }`}
                                   onClick={() => slot.available && handleTimeSelect(slot.value)}
