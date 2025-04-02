@@ -48,62 +48,6 @@ const isWeekend = (date: Date) => {
   return date.getDay() === 0 || date.getDay() === 6;
 };
 
-// Add custom styling to hide Saturday and Sunday columns conditionally
-const getCalendarStyles = (allowWeekends: boolean) => `
-  ${!allowWeekends ? `
-    .rdp-day_saturday,
-    .rdp-day_sunday,
-    .rdp-day[aria-label*="Samstag"],
-    .rdp-day[aria-label*="Sonntag"] {
-      display: none !important;
-    }
-    
-    .rdp-head_cell:last-child,
-    .rdp-head_cell:nth-child(6),
-    .rdp-head_cell:first-child {
-      display: none !important;
-    }
-  ` : ''}
-  
-  .rdp-row {
-    justify-content: ${allowWeekends ? 'space-between' : 'space-around'} !important;
-  }
-
-  .rdp-table {
-    width: 100% !important;
-  }
-
-  .rdp-caption {
-    padding: 0 1rem;
-  }
-`;
-
-// Add this style block at the top of the component, after the existing customCalendarStyles
-const scrollbarStyles = `
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: #1A1A1A;
-    border-radius: 20px;
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #333;
-    border-radius: 20px;
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #444;
-  }
-  
-  .custom-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: #333 #1A1A1A;
-  }
-`;
-
 export default function GoogleCalendarPicker({
   onChange,
   value,
@@ -121,6 +65,59 @@ export default function GoogleCalendarPicker({
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [showTimeSlots, setShowTimeSlots] = useState(false);
+
+  // Get dynamic styles based on allowWeekends prop
+  const dynamicStyles = `
+    ${!allowWeekends ? `
+      .rdp-day_saturday,
+      .rdp-day_sunday,
+      .rdp-day[aria-label*="Samstag"],
+      .rdp-day[aria-label*="Sonntag"] {
+        display: none !important;
+      }
+      
+      .rdp-head_cell:last-child,
+      .rdp-head_cell:nth-child(6),
+      .rdp-head_cell:first-child {
+        display: none !important;
+      }
+    ` : ''}
+    
+    .rdp-row {
+      justify-content: ${allowWeekends ? 'space-between' : 'space-around'} !important;
+    }
+
+    .rdp-table {
+      width: 100% !important;
+    }
+
+    .rdp-caption {
+      padding: 0 1rem;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #1A1A1A;
+      border-radius: 20px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 20px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #444;
+    }
+    
+    .custom-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: #333 #1A1A1A;
+    }
+  `
 
   // Update the parent component when a date and time are selected
   useEffect(() => {
@@ -180,8 +177,7 @@ export default function GoogleCalendarPicker({
 
   return (
     <div className="relative">
-      <style jsx global>{getCalendarStyles(allowWeekends)}</style>
-      <style jsx global>{scrollbarStyles}</style>
+      <style jsx global>{dynamicStyles}</style>
       
       <div 
         className={`flex items-center justify-between bg-[#1A1A1A] border border-gray-700 rounded-lg px-4 py-3 cursor-pointer hover:border-[#C8A97E] transition-colors ${className}`}
