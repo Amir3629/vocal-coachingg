@@ -188,7 +188,7 @@ export default function GoogleCalendarPicker({
               animate={{ opacity: 1, backdropFilter: "blur(8px)" }}
               exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
               transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-              className="fixed inset-0 bg-black/60 z-40"
+              className="fixed inset-0 bg-black/60 z-[100]"
               style={{ backdropFilter: "blur(8px)" }}
               onClick={() => setIsOpen(false)}
             />
@@ -199,7 +199,12 @@ export default function GoogleCalendarPicker({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-auto min-w-[600px] max-w-[90vw]"
+              className="fixed top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] z-[101] w-[500px]"
+              style={{
+                margin: '0 auto',
+                position: 'fixed',
+                transform: 'translate(-50%, -50%)'
+              }}
             >
               <motion.div 
                 className="bg-[#111] border border-gray-800 rounded-xl shadow-2xl overflow-hidden"
@@ -217,7 +222,7 @@ export default function GoogleCalendarPicker({
                 </div>
                 
                 <div className="p-4 flex flex-row justify-center items-start gap-4">
-                  <div className="min-w-[320px]">
+                  <div className="w-[300px]">
                     <Calendar
                       mode="single"
                       selected={date}
@@ -231,6 +236,9 @@ export default function GoogleCalendarPicker({
                         day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100",
                         day_selected: "bg-[#C8A97E] text-black hover:bg-[#C8A97E] hover:text-black",
                         day_today: "bg-[#C8A97E]/10 text-[#C8A97E] font-semibold",
+                        table: "w-full",
+                        months: "flex flex-col space-y-4",
+                        month: "space-y-4 w-full"
                       }}
                     />
                   </div>
@@ -243,7 +251,7 @@ export default function GoogleCalendarPicker({
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -20 }}
                           transition={{ duration: 0.6, delay: 0.2 }}
-                          className="min-w-[160px] border-l border-gray-800 pl-4"
+                          className="w-[140px] border-l border-gray-800 pl-4"
                         >
                           <h4 className="text-white text-sm font-medium mb-3 flex items-center">
                             <Clock className="w-4 h-4 mr-2 text-[#C8A97E]" />
