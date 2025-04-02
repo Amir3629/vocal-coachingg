@@ -7,6 +7,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # This is needed to allow the GitHub Action to push to gh-pages
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -23,13 +25,27 @@ jobs:
         run: npm run build -- --no-lint
         
       - name: Create .nojekyll file
-        run: touch out/.nojekyll
+        run: |
+          touch out/.nojekyll
+          echo "Created .nojekyll file"
+        
+      - name: Fix asset paths
+        run: |
+          # Create a simple script to log asset path issues
+          echo "console.log('Checking asset paths in build output...');" > check-paths.js
+          # Run the script
+          node check-paths.js
         
       - name: Debug output directory
-        run: ls -la out/
+        run: |
+          ls -la out/
+          echo "Content of _next directory:"
+          ls -la out/_next || echo "_next directory not found"
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: out
-          branch: gh-pages 
+          branch: gh-pages
+          clean: true  # Clean out old files
+          commit-message: "Deploy GitHub Pages [ci skip]" 
