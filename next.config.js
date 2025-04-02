@@ -17,8 +17,8 @@ const nextConfig = {
       }
     ],
   },
-  basePath: process.env.NODE_ENV === 'production' ? '/vocal-coaching' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/vocal-coaching/' : '',
+  basePath: process.env.NODE_ENV === 'production' ? '/vocal-coachingg' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/vocal-coachingg/' : '',
   trailingSlash: true,
   webpack: (config) => {
     config.module.rules.push({
@@ -28,7 +28,7 @@ const nextConfig = {
     return config
   },
   publicRuntimeConfig: {
-    basePath: process.env.NODE_ENV === 'production' ? '/vocal-coaching' : '',
+    basePath: process.env.NODE_ENV === 'production' ? '/vocal-coachingg' : '',
   },
 }
 
