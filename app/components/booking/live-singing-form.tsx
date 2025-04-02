@@ -255,7 +255,7 @@ export default function LiveSingingForm({ formData, onChange }: LiveSingingFormP
             value={formData.jazzStandards || ''}
             onChange={(e) => onChange({ jazzStandards: e.target.value })}
             className="w-full px-4 py-2 bg-[#1A1A1A] border border-gray-800 rounded-lg text-white focus:border-[#C8A97E] focus:outline-none transition-colors min-h-[100px]"
-            placeholder={t('booking.jazzStandardsPlaceholder', 'Ihre Wunsch-Songs und wie Sie diese präsentiert haben möchten: Als elegante Klangkulisse für Gespräche oder als zentrales musikalisches Highlight? (z.B. "Fly Me To The Moon" als sanfte Jazz-Interpretation während des Empfangs, "Autumn Leaves" als besonderes Feature mit voller Aufmerksamkeit)')}
+            placeholder={t('booking.jazzStandardsPlaceholder', 'Ihre Lieblings-Jazz-Standards: Von dezent-elegant bis Show-Highlight (z.B. "Fly Me To The Moon" • "Autumn Leaves")')}
           />
         </div>
         
